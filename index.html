@@ -114,5 +114,163 @@ Error generating stack: `+I.message+`
   new MutationObserver(install).observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
+
+<script data-atpp-checkpoint="p1">
+(function () {
+  'use strict';
+
+  const STORAGE_KEY = 'atpp.fi.checkpoint.v1';
+  const DEBOUNCE_MS = 350;
+  let timer = null;
+  let sequence = 0;
+
+  function elementKey(element, index) {
+    return element.getAttribute('data-testid') ||
+      element.getAttribute('name') ||
+      element.id ||
+      element.getAttribute('aria-label') ||
+      element.getAttribute('placeholder') ||
+      `${element.tagName.toLowerCase()}-${index}`;
+  }
+
+  function collectInputs() {
+    return Array.from(document.querySelectorAll('input, textarea, select')).map((element, index) => ({
+      key: elementKey(element, index),
+      tag: element.tagName.toLowerCase(),
+      type: element.type || null,
+      value: element.type === 'checkbox' || element.type === 'radio' ? null : element.value,
+      checked: element.type === 'checkbox' || element.type === 'radio' ? Boolean(element.checked) : null,
+      disabled: Boolean(element.disabled),
+    }));
+  }
+
+  function collectVisibleContext() {
+    const active = document.activeElement;
+    return {
+      title: document.title || '',
+      path: window.location.pathname,
+      hash: window.location.hash || '',
+      active_key: active && active !== document.body ? elementKey(active, -1) : null,
+      visible_buttons: Array.from(document.querySelectorAll('button'))
+        .filter((button) => {
+          const style = window.getComputedStyle(button);
+          return style.display !== 'none' && style.visibility !== 'hidden';
+        })
+        .slice(0, 80)
+        .map((button) => (button.innerText || button.getAttribute('aria-label') || '').trim())
+        .filter(Boolean),
+    };
+  }
+
+  function buildSnapshot(reason) {
+    return {
+      schema: 'ATPP_CHECKPOINT_V1',
+      sequence: ++sequence,
+      saved_at: new Date().toISOString(),
+      reason: reason || 'change',
+      origin: window.location.origin,
+      inputs: collectInputs(),
+      visible_context: collectVisibleContext(),
+    };
+  }
+
+  function persistCheckpoint(reason) {
+    const snapshot = buildSnapshot(reason);
+    window.__ATPP_CHECKPOINT__ = window.__ATPP_CHECKPOINT__ || {};
+    window.__ATPP_CHECKPOINT__.lastAttempt = snapshot;
+    try {
+      const serialized = JSON.stringify(snapshot);
+      localStorage.setItem(STORAGE_KEY, serialized);
+      const readBack = localStorage.getItem(STORAGE_KEY);
+      if (readBack !== serialized) {
+        throw new Error('checkpoint read-back mismatch');
+      }
+      window.__ATPP_CHECKPOINT__.status = 'saved';
+      window.__ATPP_CHECKPOINT__.lastSaved = snapshot;
+      window.dispatchEvent(new CustomEvent('atpp:checkpoint-saved', { detail: snapshot }));
+      return true;
+    } catch (error) {
+      window.__ATPP_CHECKPOINT__.status = 'unavailable';
+      window.__ATPP_CHECKPOINT__.error = String(error && error.message ? error.message : error);
+      return false;
+    }
+  }
+
+  function scheduleCheckpoint(reason) {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(function () {
+      persistCheckpoint(reason);
+    }, DEBOUNCE_MS);
+  }
+
+  function hasExternalDestination(anchor) {
+    if (!anchor || !anchor.href) return false;
+    try {
+      const url = new URL(anchor.href, document.baseURI);
+      return url.protocol === 'https:' && (
+        url.hostname === 'wa.me' ||
+        url.hostname.endsWith('.streamlit.app') ||
+        url.hostname.endsWith('.github.io') ||
+        url.origin !== window.location.origin
+      );
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function initialize() {
+    window.__ATPP_CHECKPOINT__ = window.__ATPP_CHECKPOINT__ || {};
+    try {
+      const existing = localStorage.getItem(STORAGE_KEY);
+      if (existing) {
+        window.__ATPP_CHECKPOINT__.available = true;
+        window.__ATPP_CHECKPOINT__.stored = JSON.parse(existing);
+      } else {
+        window.__ATPP_CHECKPOINT__.available = false;
+      }
+    } catch (error) {
+      window.__ATPP_CHECKPOINT__.available = false;
+      window.__ATPP_CHECKPOINT__.status = 'unavailable';
+      window.__ATPP_CHECKPOINT__.error = String(error && error.message ? error.message : error);
+    }
+
+    document.addEventListener('input', function () {
+      scheduleCheckpoint('input');
+    }, true);
+
+    document.addEventListener('change', function () {
+      scheduleCheckpoint('change');
+    }, true);
+
+    document.addEventListener('click', function (event) {
+      const anchor = event.target && event.target.closest ? event.target.closest('a[href]') : null;
+      if (hasExternalDestination(anchor)) {
+        persistCheckpoint('before-external-navigation');
+      }
+      window.setTimeout(function () {
+        persistCheckpoint('click');
+      }, 0);
+    }, true);
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') {
+        persistCheckpoint('visibility-hidden');
+      }
+    }, true);
+
+    window.addEventListener('pagehide', function () {
+      persistCheckpoint('pagehide');
+    }, true);
+
+    scheduleCheckpoint('initial');
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialize, { once: true });
+  } else {
+    initialize();
+  }
+})();
+</script>
 </body>
 </html>
