@@ -1,6 +1,16 @@
 # ATpp · Fase Intensiva
 
-Versión inicial del micrositio interactivo del Consejo Técnico Escolar, preparada para ejecutarse en Streamlit y publicarse también como sitio estático en GitHub Pages.
+Micrositio interactivo del Consejo Técnico Escolar, preparado para ejecutarse en Streamlit y compartirse mediante una entrada web ligera en GitHub Pages.
+
+## Estructura
+
+| Archivo | Función |
+| --- | --- |
+| `index.html` | Entrada pública ligera para Facebook y WhatsApp; contiene Open Graph, la tarjeta visual y los enlaces principales. |
+| `micrositio.html` | Micrositio interactivo completo con presentación, anexos, botones y corrección del modal. |
+| `app.py` | Envoltura Streamlit que carga `micrositio.html`. |
+| `social-preview.png` | Imagen Open Graph de 1200×630 para las publicaciones sociales. |
+| `requirements.txt` | Dependencia de Streamlit. |
 
 ## Ejecución local
 
@@ -27,6 +37,12 @@ El botón `¿IA & Docencia? ATpp lo Reinventa!` dirige a:
 
 `https://atpp-intensive-eydzt2zlv9eu4kzcjhpb6o.streamlit.app/`
 
-## Publicación
+## Publicación y enlaces
 
-Para Streamlit Community Cloud, seleccionar este repositorio, la rama `main` y el archivo `app.py`. Para la vista previa en Facebook, habilitar GitHub Pages sobre `main` y usar la URL `https://dlssolutionsmx.github.io/fase-intensiva-2627/`; `index.html` contiene metadatos Open Graph y `social-preview.png` es la tarjeta visual pública.
+Para Streamlit Community Cloud, seleccionar este repositorio, la rama `main` y el archivo `app.py`. Para compartir en Facebook, utilizar la entrada ligera de GitHub Pages:
+
+`https://dlssolutionsmx.github.io/fase-intensiva-2627/`
+
+La entrada carga rápidamente, entrega los metadatos Open Graph y dirige al visitante al micrositio interactivo. La aplicación completa en Streamlit queda disponible en:
+
+`https://faseintensiva2627.streamlit.app/`
