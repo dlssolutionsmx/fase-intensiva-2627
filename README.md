@@ -17,8 +17,15 @@ Los botones de WhatsApp anteponen un código estable al mensaje para que el chat
 | --- | --- | --- |
 | Descargar Presentación | `ATPP-FI-PRESENTACION` | `ATPP-FI-PRESENTACION | Quiero la presentación.` |
 | Descargar Anexos | `ATPP-FI-ANEXOS` | `ATPP-FI-ANEXOS | Quiero los Anexos` |
+| Descargar Presentación y Notas Metodológicas para Directivos | `ATPP-FI-DIRECTIVOS` | `ATPP-FI-DIRECTIVOS | Solicito la presentación y las notas metodológicas para directivos.` |
 
 El chatbot debe leer el texto antes del separador `|`. Se eligió un prefijo porque es más robusto que depender de un sufijo o de la posición final del mensaje.
+
+## Botón principal de micrositio
+
+El botón `¿IA & Docencia? ATpp lo Reinventa!` dirige a:
+
+`https://atpp-intensive-eydzt2zlv9eu4kzcjhpb6o.streamlit.app/`
 
 ## Publicación
 
