@@ -15,10 +15,10 @@ st.set_page_config(
 )
 
 ROOT = Path(__file__).resolve().parent
-HTML_FILE = ROOT / "micrositio.html"
+HTML_FILE = ROOT / "index.html"
 
 if not HTML_FILE.exists():
-    st.error("No se encontró micrositio.html en el despliegue.")
+    st.error("No se encontró index.html en el despliegue.")
     st.stop()
 
 html = HTML_FILE.read_text(encoding="utf-8")

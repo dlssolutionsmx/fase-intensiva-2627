@@ -1,14 +1,15 @@
 # ATpp · Fase Intensiva
 
-Micrositio interactivo del Consejo Técnico Escolar, preparado para ejecutarse en Streamlit y compartirse mediante una entrada web ligera en GitHub Pages.
+Micrositio interactivo del Consejo Técnico Escolar, preparado para ejecutarse en Streamlit y compartirse mediante una entrada social ligera en GitHub Pages.
 
 ## Estructura
 
 | Archivo | Función |
 | --- | --- |
-| `index.html` | Entrada pública ligera para Facebook y WhatsApp; contiene Open Graph, la tarjeta visual y los enlaces principales. |
-| `micrositio.html` | Micrositio interactivo completo con presentación, anexos, botones y corrección del modal. |
-| `app.py` | Envoltura Streamlit que carga `micrositio.html`. |
+| `index.html` | Micrositio interactivo principal con las diapositivas, anexos, botones y corrección del modal. |
+| `social.html` | Entrada pública ligera para Facebook y WhatsApp; contiene Open Graph, la tarjeta visual y enlaces principales. |
+| `micrositio.html` | Copia técnica del micrositio interactivo completo. |
+| `app.py` | Envoltura Streamlit que carga `index.html`. |
 | `social-preview.png` | Imagen Open Graph de 1200×630 para las publicaciones sociales. |
 | `requirements.txt` | Dependencia de Streamlit. |
 
@@ -37,12 +38,16 @@ El botón `¿IA & Docencia? ATpp lo Reinventa!` dirige a:
 
 `https://atpp-intensive-eydzt2zlv9eu4kzcjhpb6o.streamlit.app/`
 
-## Publicación y enlaces
+## Enlaces de publicación
 
-Para Streamlit Community Cloud, seleccionar este repositorio, la rama `main` y el archivo `app.py`. Para compartir en Facebook, utilizar la entrada ligera de GitHub Pages:
+La página principal, que muestra las diapositivas completas, es:
 
 `https://dlssolutionsmx.github.io/fase-intensiva-2627/`
 
-La entrada carga rápidamente, entrega los metadatos Open Graph y dirige al visitante al micrositio interactivo. La aplicación completa en Streamlit queda disponible en:
+Para publicar en Facebook y evitar que el navegador interno falle al abrir un HTML pesado, utilizar la entrada social ligera:
+
+`https://dlssolutionsmx.github.io/fase-intensiva-2627/social.html`
+
+La aplicación completa en Streamlit es:
 
 `https://faseintensiva2627.streamlit.app/`
