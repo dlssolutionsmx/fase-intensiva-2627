@@ -51,3 +51,7 @@ Para publicar en Facebook y evitar que el navegador interno falle al abrir un HT
 La aplicación completa en Streamlit es:
 
 `https://atpp-intensiva.streamlit.app/`
+
+## Infraestructura de solicitudes
+
+Los tres botones de WhatsApp conservan su apariencia y generan al hacer clic un mensaje con el formato `ATPP-FI-REQUEST|v=1|folio=...|request=...|prompt_id=PENDING|source=FASE_INTENSIVA`. El folio es dinámico, no contiene datos personales y `prompt_id=PENDING` queda reservado hasta definir la acción del agente. La presentación gancho no incorpora el flujo operativo, las matrices ni el paquete TXT del micrositio siguiente.

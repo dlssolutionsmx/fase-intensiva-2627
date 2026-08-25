@@ -71,13 +71,98 @@
         <div class="actions">
           <a class="button primary" href="https://dlssolutionsmx.github.io/fase-intensiva-2627/?from=facebook" rel="noopener">Ver las diapositivas completas</a>
           <a class="button presentation" href="https://atpp-intensiva.streamlit.app/" target="_blank" rel="noopener">¿IA &amp; Docencia? ATpp lo Reinventa!</a>
-          <a class="button presentation" href="https://wa.me/528131215831?text=ATPP-FI-PRESENTACION%20%7C%20Quiero%20la%20presentaci%C3%B3n." target="_blank" rel="noopener">Descargar Presentación<span class="code">ATPP-FI-PRESENTACION</span></a>
-          <a class="button annexes" href="https://wa.me/528131215831?text=ATPP-FI-ANEXOS%20%7C%20Quiero%20los%20Anexos" target="_blank" rel="noopener">Descargar Anexos<span class="code">ATPP-FI-ANEXOS</span></a>
-          <a class="button directivos" href="https://wa.me/528131215831?text=ATPP-FI-DIRECTIVOS%20%7C%20Solicito%20la%20presentaci%C3%B3n%20y%20las%20notas%20metodol%C3%B3gicas%20para%20directivos." target="_blank" rel="noopener">Presentación y Notas Metodológicas para Directivos<span class="code">ATPP-FI-DIRECTIVOS</span></a>
+          <a class="button presentation" href="https://wa.me/528131215831?text=ATPP-FI-REQUEST%7Cv%3D1%7Cfolio%3DSTATIC%7Crequest%3DPRESENTACION%7Cprompt_id%3DPENDING%7Csource%3DFASE_INTENSIVA%0AHola.%20Solicito%20la%20presentaci%C3%B3n%20de%20la%20Fase%20Intensiva." target="_blank" rel="noopener">Descargar Presentación<span class="code">ATPP-FI-PRESENTACION</span></a>
+          <a class="button annexes" href="https://wa.me/528131215831?text=ATPP-FI-REQUEST%7Cv%3D1%7Cfolio%3DSTATIC%7Crequest%3DANEXOS%7Cprompt_id%3DPENDING%7Csource%3DFASE_INTENSIVA%0AHola.%20Solicito%20los%20anexos%20de%20la%20Fase%20Intensiva." target="_blank" rel="noopener">Descargar Anexos<span class="code">ATPP-FI-ANEXOS</span></a>
+          <a class="button directivos" href="https://wa.me/528131215831?text=ATPP-FI-REQUEST%7Cv%3D1%7Cfolio%3DSTATIC%7Crequest%3DDIRECTIVOS%7Cprompt_id%3DPENDING%7Csource%3DFASE_INTENSIVA%0AHola.%20Solicito%20la%20presentaci%C3%B3n%20y%20las%20notas%20metodol%C3%B3gicas%20para%20directivos." target="_blank" rel="noopener">Presentación y Notas Metodológicas para Directivos<span class="code">ATPP-FI-DIRECTIVOS</span></a>
         </div>
       </div>
       <footer>ATpp · Fase Intensiva · La página pública funciona como entrada social y dirige al micrositio interactivo.</footer>
     </section>
   </main>
+<script data-atpp-request-infrastructure="v1">
+(function () {
+  'use strict';
+
+  const WA_NUMBER = '528131215831';
+  const SOURCE = 'FASE_INTENSIVA';
+  const PROMPT_ID = 'PENDING';
+  const REQUESTS = {
+    PRESENTACION: 'Hola. Solicito la presentación de la Fase Intensiva.',
+    ANEXOS: 'Hola. Solicito los anexos de la Fase Intensiva.',
+    DIRECTIVOS: 'Hola. Solicito la presentación y las notas metodológicas para directivos.',
+  };
+
+  function randomToken() {
+    const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const bytes = new Uint8Array(4);
+    try {
+      window.crypto.getRandomValues(bytes);
+      return Array.from(bytes, (byte) => alphabet[byte % alphabet.length]).join('');
+    } catch (_) {
+      return Math.random().toString(36).slice(2, 6).toUpperCase();
+    }
+  }
+
+  function makeFolio() {
+    const now = new Date();
+    const pad = (value) => String(value).padStart(2, '0');
+    const date = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}`;
+    const time = `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+    return `FI-${date}-${time}-${randomToken()}`;
+  }
+
+  function makeMessage(request) {
+    const folio = makeFolio();
+    return [
+      `ATPP-FI-REQUEST|v=1|folio=${folio}|request=${request}|prompt_id=${PROMPT_ID}|source=${SOURCE}`,
+      REQUESTS[request],
+    ].join('\n');
+  }
+
+  function makeUrl(request) {
+    return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(makeMessage(request))}`;
+  }
+
+  function requestForAnchor(anchor) {
+    const text = (anchor.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    if (text.includes('notas metodológicas') || text.includes('directivos')) return 'DIRECTIVOS';
+    if (text.includes('anexos')) return 'ANEXOS';
+    if (text.includes('descargar presentación')) return 'PRESENTACION';
+    return null;
+  }
+
+  function wire(anchor, request) {
+    if (!anchor || !request) return;
+    anchor.dataset.atppRequestCode = request;
+    anchor.target = '_blank';
+    anchor.rel = 'noopener noreferrer';
+    if (!anchor.dataset.atppFolioBound) {
+      anchor.addEventListener('click', function () {
+        anchor.href = makeUrl(request);
+        anchor.dataset.atppFolio = anchor.href;
+      }, true);
+      anchor.dataset.atppFolioBound = 'true';
+    }
+  }
+
+  function install() {
+    document.querySelectorAll('a[href*="wa.me"]').forEach((anchor) => {
+      wire(anchor, requestForAnchor(anchor));
+    });
+  }
+
+  function start() {
+    install();
+    new MutationObserver(install).observe(document.documentElement, { childList: true, subtree: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
+})();
+</script>
+
 </body>
 </html>
