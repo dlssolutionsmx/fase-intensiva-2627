@@ -36,7 +36,7 @@ El chatbot debe leer el texto antes del separador `|`. Se eligió un prefijo por
 
 El botón `¿IA & Docencia? ATpp lo Reinventa!` dirige a:
 
-`https://atpp-intensive-eydzt2zlv9eu4kzcjhpb6o.streamlit.app/`
+`https://atpp-intensiva.streamlit.app/`
 
 ## Enlaces de publicación
 
@@ -44,10 +44,10 @@ La página principal, que muestra las diapositivas completas, es:
 
 `https://dlssolutionsmx.github.io/fase-intensiva-2627/`
 
-Para publicar en Facebook y evitar que el navegador interno falle al abrir un HTML pesado, utilizar la entrada social ligera:
+Para publicar en Facebook y evitar que el navegador interno falle al abrir un HTML pesado, utilizar la entrada social ligera; esta redirige automáticamente a las diapositivas completas:
 
 `https://dlssolutionsmx.github.io/fase-intensiva-2627/social.html`
 
 La aplicación completa en Streamlit es:
 
-`https://faseintensiva2627.streamlit.app/`
+`https://atpp-intensiva.streamlit.app/`
